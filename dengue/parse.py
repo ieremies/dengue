@@ -2,6 +2,8 @@
 #!/usr/bin/env python3
 from datetime import date
 
+from dengue.debug import debug
+
 
 class usuario:
     # === Dados Gerais ============================
@@ -83,6 +85,8 @@ def get_ibge(municipio: str, uf: str) -> str:
 
 
 def parse(entrada: str = debug) -> usuario:
+    if len(entrada) < 3:
+        return parse(debug)
     u = usuario()
     linhas = entrada.split("\n")
 
@@ -113,7 +117,6 @@ def parse(entrada: str = debug) -> usuario:
         if "Nome da mãe" in linhas[i - 1]:
             u.nome_mae = linhas[i].strip()
         if "Raça/cor" in linhas[i - 1]:
-            print("Achei a raça", linhas[i].strip())
             u.raca = linhas[i].strip()
         if "CEP" in linhas[i - 1]:
             u.cep_residencia = linhas[i].replace("-", "").strip()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import Flask, request, render_template, send_file
-from parse import parse
-from write import writer
+from dengue.parse import parse
+from dengue.write import writer
 
 app = Flask(__name__, template_folder="templates")
 

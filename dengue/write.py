@@ -5,9 +5,10 @@ from reportlab.lib.pagesizes import A4
 from pypdf import PdfReader, PdfWriter
 
 from math import floor
-from parse import usuario, parse
-from debug import debug
+from dengue.parse import usuario, parse
+from dengue.debug import debug
 import os
+import requests
 
 
 class writer:
@@ -18,10 +19,15 @@ class writer:
 
         name = self.user.nome.split()
         pdf_name = f"{name[0].lower()}_{name[-1].lower()}.pdf"
-        if os.name == "nt":
+
+        if os.name == "nt":  # windows
             self.save_path = os.path.join(os.path.expanduser("~"), "Desktop/", pdf_name)
-        else:
-            self.save_path = pdf_name
+        else:  # linux
+            self.save_path = "./tmp/" + pdf_name
+
+        # check if tmp folder exists
+        if not os.path.exists("./tmp"):
+            os.makedirs("./tmp")
 
         self.c = canvas.Canvas(self.save_path, pagesize=A4)
 
@@ -41,7 +47,6 @@ class writer:
         self.write_spaced(self.user.sexo[0], (232, 548))
         # skip gestante
         self.write_spaced(self._code_raca(self.user.raca), (552, 548))
-        print(self.user.raca)
         self.write_spaced(self._code_esco(self.user.escolaridade), (552, 519))
         self.write_spaced(self.user.n_sus, (54, 474), 11.7)
         self.write(self.user.nome_mae, (236, 474))
@@ -140,19 +145,21 @@ class writer:
             for y in range(10, floor(self.h), 10):
                 self.c.drawString(x + 1, y + 1, f"{x//10}|{y//10}")
 
-    def save(self):
-        self.write_dados_gerais()
-        self.write_notificacao_individual()
-        self.write_dados_residencia()
-        self.c.showPage()
-        # self.offset = 89
-        # self.write_dados_gerais()
-        # self.write_notificacao_individual()
-        # self.write_dados_residencia()
-        self.c.save()
-        # go to the next page
+    def check_exists_file(self, file):
+        # if file exists
+        if os.path.isfile("tmp/" + file):
+            return
 
-        base_pdf = PdfReader(open("base.pdf", "rb"))
+        url = f"https://dengue.ieremies.dev/data/{file}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open("tmp/" + file, "wb") as f:
+                f.write(response.content)
+
+    def merge_sinan(self):
+        self.check_exists_file("sinan.pdf")
+
+        base_pdf = PdfReader(open("tmp/sinan.pdf", "rb"))
         base = base_pdf.pages[0]
         overlay = PdfReader(open(self.save_path, "rb")).pages[0]
         base.merge_page(overlay)
@@ -164,6 +171,19 @@ class writer:
         # Write the merged PDF to a new file
         with open(self.save_path, "wb") as output_file:
             output_pdf.write(output_file)
+
+    def save(self):
+        self.write_dados_gerais()
+        self.write_notificacao_individual()
+        self.write_dados_residencia()
+        self.c.showPage()
+        # self.offset = 89
+        # self.write_dados_gerais()
+        # self.write_notificacao_individual()
+        # self.write_dados_residencia()
+        self.c.save()
+
+        self.merge_sinan()
 
         return self.save_path
 
