@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "dengue"
+version = "0.1.0"
+description = ""
+authors = ["Ieremies Romero <ieremies@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+reportlab = "^4.2.0"
+Flask = "^3.0.3"
+pypdf = "^4.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
