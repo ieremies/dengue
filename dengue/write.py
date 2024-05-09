@@ -9,6 +9,8 @@ from dengue.parse import usuario, parse
 from dengue.debug import debug
 import os
 import requests
+from datetime import datetime, timedelta
+
 
 
 class writer:
@@ -145,9 +147,20 @@ class writer:
             for y in range(10, floor(self.h), 10):
                 self.c.drawString(x + 1, y + 1, f"{x//10}|{y//10}")
 
+    def file_exists_and_not_old(self, file_path: str):
+        if not os.path.exists(file_path):
+            return False
+
+        file_modified_time = datetime.fromtimestamp(os.path.getmtime(file_path))
+        current_time = datetime.now()
+        max_age = timedelta(hours=12)
+
+        return current_time - file_modified_time < max_age
+
     def check_exists_file(self, file):
         # if file exists
-        if os.path.isfile("tmp/" + file):
+        
+        if self.file_exists_and_not_old("tmp/" + file):
             return
 
         url = f"https://dengue.ieremies.dev/data/{file}"
@@ -157,9 +170,9 @@ class writer:
                 f.write(response.content)
 
     def merge_sinan(self):
-        self.check_exists_file("sinan.pdf")
+        self.check_exists_file("sinan1.pdf")
 
-        base_pdf = PdfReader(open("tmp/sinan.pdf", "rb"))
+        base_pdf = PdfReader(open("tmp/sinan1.pdf", "rb"))
         base = base_pdf.pages[0]
         overlay = PdfReader(open(self.save_path, "rb")).pages[0]
         base.merge_page(overlay)
