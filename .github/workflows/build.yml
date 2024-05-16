@@ -17,7 +17,8 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'  # Substitua '3.11'
+        python-version: '3.11'  # Substitua '3.x' pela versão do Python que você está utilizando
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -27,14 +28,18 @@ jobs:
       run: |
         pyinstaller -F --add-data templates:templates app.py
 
+    - name: Get tag
+      id: get_tag
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ steps.get_tag.outputs.tag }}
+        release_name: Release ${{ steps.get_tag.outputs.tag }}
         draft: false
         prerelease: false
 
