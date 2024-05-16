@@ -47,3 +47,34 @@ jobs:
         asset_path: dist\app.exe  # Substitua 'app.exe' pelo nome do seu executável, se diferente
         asset_name: app.exe  # Substitua 'app.exe' pelo nome do seu executável, se diferente
         asset_content_type: application/octet-stream
+
+  update-index:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Get tag
+      id: get_tag
+      run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
+    - name: Update redirect URL in index.html
+      run: |
+        TAG=$(echo ${{ steps.get_tag.outputs.tag }})
+        sed -i'' -e "s/v.*\/app.exe/${TAG}\/app.exe/g" index.html 
+        
+    - name: Commit changes
+      run: |
+        git checkout main
+        git pull origin main
+        git add index.html
+        git commit -m "Update redirect URL to tag ${{ steps.get_tag.outputs.tag }}"
+        git push origin main
+
