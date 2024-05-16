@@ -1,60 +1,61 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerador de notificação</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f8f8f8;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <title>Simple Form</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f5f5f5;
+    }
 
-.container {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  max-width: 400px;
-  width: 100%;
-}
+    form {
+      width: 50ch;
+      padding: 1rem;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center; /* Adicionado para centralizar o botão */
+    }
 
-input[type="text"] {
-  width: calc(100% - 10px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
+    input[type="text"] {
+      width: 95%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 3px;
+      margin-bottom: 10px; /* Adicionando margem na parte inferior */
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Adicionando sombra */
 
-button[type="submit"] {
-  background-color: #007bff;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  padding: 10px;
-  cursor: pointer;
-  width: 100%;
-}
+    }
 
-button[type="submit"]:hover {
-  background-color: #0056b3;
-}
-</style>
+    button[type="submit"] {
+      width: 25%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      background-color: #3498db; /* Adjust background color as desired */
+      color: #fff;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #2980b9; /* Adjust hover color as desired */
+    }
+
+  </style>
 </head>
 <body>
-  <div class="container">
-    <form action="/" method="POST">
-      <label for="text">Copie os dados do paciente e cole aqui:</label><br>
-      <textarea id="text" name="text" rows="5" cols="47"></textarea><br>
-      <button type="submit">Enviar</button>
-    </form>
-  </div>
+  <form action="/" method="POST">
+    <input type="text" name="text" placeholder="Copie (ctrl+A ctrl+C) e cole (ctrl+V) aqui a página do paciente..."> <br>
+    <button type="submit">Enviar</button>
+  </form>
 </body>
+</html>

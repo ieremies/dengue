@@ -12,7 +12,6 @@ import requests
 from datetime import datetime, timedelta
 
 
-
 class writer:
     def __init__(self, user: usuario):
         self.user = user
@@ -20,7 +19,10 @@ class writer:
         self.offset = 0
 
         name = self.user.nome.split()
-        pdf_name = f"{name[0].lower()}_{name[-1].lower()}.pdf"
+        if len(name) > 0:
+            pdf_name = f"{name[0].lower()}_{name[-1].lower()}.pdf"
+        else:
+            pdf_name = f"notificacao.pdf"
 
         if os.name == "nt":  # windows
             self.save_path = os.path.join(os.path.expanduser("~"), "Desktop/", pdf_name)
@@ -46,7 +48,8 @@ class writer:
         self.write(self.user.nome, (62, 564))
         self.write_spaced(self.user.nascimento, (449, 564))
         # skip idade
-        self.write_spaced(self.user.sexo[0], (232, 548))
+        if len(self.user.sexo) > 0:
+            self.write_spaced(self.user.sexo[0], (232, 548))
         # skip gestante
         self.write_spaced(self._code_raca(self.user.raca), (552, 548))
         self.write_spaced(self._code_esco(self.user.escolaridade), (552, 519))
@@ -104,7 +107,7 @@ class writer:
             return "7"
         if all(w in esco for w in ["superior", "completo"]):
             return "8"
-        return "0"
+        return ""
 
     def _code_raca(self, raca: str) -> str:
         raca = raca.lower()
@@ -159,7 +162,7 @@ class writer:
 
     def check_exists_file(self, file):
         # if file exists
-        
+
         if self.file_exists_and_not_old("tmp/" + file):
             return
 

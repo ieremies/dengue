@@ -55,6 +55,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.RELEASE_TOKEN }}
 
     - name: Set up Git
       run: |
@@ -71,11 +73,10 @@ jobs:
         sed -i'' -e "s/v.*\/app.exe/${TAG}\/app.exe/g" index.html 
         
     - name: Commit changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       run: |
-        git fetch
-        git checkout main
-        git pull origin main
         git add index.html
         git commit -m "Update redirect URL to tag ${{ steps.get_tag.outputs.tag }}"
+        git remote set-url --push origin https://ieremies:$GITHUB_TOKEN@github.com/dengue
         git push origin main
-
