@@ -72,6 +72,7 @@ jobs:
         
     - name: Commit changes
       run: |
+        git fetch
         git checkout main
         git pull origin main
         git add index.html
