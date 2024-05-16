@@ -89,6 +89,7 @@ def parse(entrada: str = debug) -> usuario:
         return parse(debug)
     u = usuario()
     linhas = entrada.split("\n")
+    print(linhas)
 
     # Dados Gerais
     u.data = date.today().strftime("%d/%m/%Y")

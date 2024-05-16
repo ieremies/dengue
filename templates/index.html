@@ -25,18 +25,20 @@
       text-align: center; /* Adicionado para centralizar o botão */
     }
 
-    input[type="text"] {
+    textarea {
       width: 95%;
+      height: 150px; /* Ajuste a altura conforme necessário */
       padding: 0.75rem;
       border: none;
       border-radius: 3px;
       margin-bottom: 10px; /* Adicionando margem na parte inferior */
+      resize: vertical; /* Permite redimensionar verticalmente */
     }
   </style>
 </head>
 <body>
   <form id="form" action="/" method="POST">
-    <input id="text" type="text" name="text" placeholder="Copie (ctrl+A ctrl+C) e cole (ctrl+V) aqui a página do paciente..."> <br>
+    <textarea id="text" name="text" placeholder="Copie (ctrl+A ctrl+C) e cole (ctrl+V) aqui a página do paciente..."></textarea> <br>
   </form>
   <script>
   document.getElementById('text').addEventListener('input', function() {
