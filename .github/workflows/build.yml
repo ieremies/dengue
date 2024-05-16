@@ -2,8 +2,8 @@ name: Build Executable
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
@@ -27,8 +27,23 @@ jobs:
       run: |
         pyinstaller -F --add-data templates:templates app.py
 
-    - name: Upload executable
-      uses: actions/upload-artifact@v2
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        name: app-executable
-        path: dist\app.exe 
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist\app.exe  # Substitua 'app.exe' pelo nome do seu executável, se diferente
+        asset_name: app.exe  # Substitua 'app.exe' pelo nome do seu executável, se diferente
+        asset_content_type: application/octet-stream
