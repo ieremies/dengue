@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-from flask import Flask, request, render_template, send_file
+from flask import Flask, request, render_template, send_file, cli
 from dengue.parse import parse
 from dengue.write import writer
 from dengue.update import check_version
 import os
+import sys
 import psutil
 
 app = Flask(__name__, template_folder="templates")
+cli.show_server_banner = lambda *_: None
 
 UPDATE_URL = "https://github.com/ieremies/dengue/releases/download/"
 VERSION = "v0.0.0"

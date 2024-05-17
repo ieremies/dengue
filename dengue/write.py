@@ -126,7 +126,6 @@ class writer:
     def write_spaced(
         self, to_write: str, coord: tuple[int, int], spacing: float = 14.5
     ):
-        print("spaced", to_write)
         self.c.setFont("Times-Roman", 10)
         x, y = coord
         for char in to_write.replace("/", "").strip():
@@ -135,7 +134,6 @@ class writer:
 
     def write(self, to_write: str, coord: tuple[int, int]):
         self.c.setFont("Times-Roman", 10)
-        print("non", to_write)
         x, y = coord
         self.c.drawString(x, y + self.offset, to_write.strip())
 
