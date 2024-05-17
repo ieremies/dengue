@@ -13,6 +13,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Get tag
+      id: get_tag
+      run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
+    - name: Update version
+      run: |
+        TAG=$(echo ${{ steps.get_tag.outputs.tag }})
+        sed -i'' -e "s/VERSION = \"v.*\"/VERSION = \"${TAG}\"/g" notificacao.py
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -25,7 +34,7 @@ jobs:
 
     - name: Build executable with PyInstaller
       run: |
-        pyinstaller -F --add-data templates:templates app.py
+        pyinstaller -F --add-data templates:templates notificacao.py
 
     - name: Create Release
       id: create_release
@@ -44,8 +53,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist\app.exe  # Substitua 'app.exe' pelo nome do seu executável, se diferente
-        asset_name: app.exe  # Substitua 'app.exe' pelo nome do seu executável, se diferente
+        asset_path: dist\notificacao.exe
+        asset_name: notificacao.exe
         asset_content_type: application/octet-stream
 
   update-index:
@@ -70,7 +79,7 @@ jobs:
     - name: Update redirect URL in index.html
       run: |
         TAG=$(echo ${{ steps.get_tag.outputs.tag }})
-        sed -i'' -e "s/v.*\/app.exe/${TAG}\/app.exe/g" index.html 
+        sed -i'' -e "s/v.*\/notificacao.exe/${TAG}\/notificacao.exe/g" index.html
         
     - name: Commit changes
       env:
