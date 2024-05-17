@@ -9,20 +9,20 @@ import psutil
 app = Flask(__name__, template_folder="templates")
 
 UPDATE_URL = "https://github.com/ieremies/dengue/releases/download/"
-VERSION = "v1.1.1"
+VERSION = "v0.0.0"
 APP_NAME = "notificacao.exe"
 
 
-def kill_others():
-    current_pid = os.getpid()
-    for process in psutil.process_iter(["pid", "name"]):
-        if (process.info["name"].lower().endswith(APP_NAME.lower())) and (
-            process.info["pid"] != current_pid
-        ):
-            print(
-                f"Terminating process {process.info['name']} with PID {process.info['pid']}"
-            )
-            process.terminate()
+# Kill others
+current_pid = os.getpid()
+for process in psutil.process_iter(["pid", "name"]):
+    if (process.info["name"].lower().endswith(APP_NAME.lower())) and (
+        process.info["pid"] != current_pid
+    ):
+        print(
+            f"Terminating process {process.info['name']} with PID {process.info['pid']}"
+        )
+        process.terminate()
 
 
 @app.route("/", methods=["GET", "POST"])

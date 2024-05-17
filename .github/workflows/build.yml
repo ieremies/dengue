@@ -35,7 +35,7 @@ jobs:
 
     - name: Build executable with PyInstaller
       run: |
-        pyinstaller -F --add-data templates:templates notificacao.py
+        pyinstaller --clean -F --add-data templates:templates notificacao.py
 
     - name: Create Release
       id: create_release
