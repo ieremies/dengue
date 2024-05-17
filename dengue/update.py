@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-import requests
-import json
-import sys
-import subprocess
-import os
+from requests import get
+from json import loads
+from sys import executable, exc_info
+from subprocess import Popen
+from os import name as os_name
 
 
 def remove_old_exe():
-    executable_path = sys.executable
+    executable_path = executable
+    print(f"Removing old in {executable_path}")
 
     batch_script = f"""
     @echo off
@@ -20,27 +21,32 @@ def remove_old_exe():
     try:
         with open(batch_file, "w") as file:
             file.write(batch_script)
-        subprocess.Popen([batch_file])
     except:
-        ...
+        print(f"Failed to write batch file {batch_file}")
+        print(exc_info()[1])
+    try:
+        Popen([batch_file])
+    except:
+        print(f"Failed to execute batch file {batch_file}")
+        print(exc_info()[1])
 
 
 def check_version(version):
     url = f"https://api.github.com/repos/ieremies/dengue/releases/latest"
-    response = requests.get(url)
+    response = get(url)
 
     if response.status_code != 200:
         print("Falha em conferir atualização.")
         return None
 
-    release_info = json.loads(response.text)
+    release_info = loads(response.text)
 
     latest_version = release_info["tag_name"]
 
     if latest_version != version:
         print(f"Nova versão disponível: {latest_version}")
 
-        if os.name == "nt":  # windows
+        if os_name == "nt":  # windows
             remove_old_exe()
 
         return latest_version

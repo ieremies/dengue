@@ -7,8 +7,8 @@ from pypdf import PdfReader, PdfWriter
 from math import floor
 from dengue.parse import usuario, parse
 from dengue.debug import debug
-import os
-import requests
+from os import name, path, makedirs
+from requests import get
 from datetime import datetime, timedelta
 
 
@@ -18,20 +18,20 @@ class writer:
         self.w, self.h = A4
         self.offset = 0
 
-        name = self.user.nome.split()
-        if len(name) > 0:
-            pdf_name = f"{name[0].lower()}_{name[-1].lower()}.pdf"
+        user_name = self.user.nome.split()
+        if len(user_name) > 0:
+            pdf_name = f"{user_name[0].lower()}_{user_name[-1].lower()}.pdf"
         else:
             pdf_name = f"notificacao.pdf"
 
-        if os.name == "nt":  # windows
-            self.save_path = os.path.join(os.path.expanduser("~"), "Desktop/", pdf_name)
+        if name == "nt":  # windows
+            self.save_path = path.join(path.expanduser("~"), "Desktop/", pdf_name)
         else:  # linux
             self.save_path = "./tmp/" + pdf_name
 
         # check if tmp folder exists
-        if not os.path.exists("./tmp"):
-            os.makedirs("./tmp")
+        if not path.exists("./tmp"):
+            makedirs("./tmp")
 
         self.c = canvas.Canvas(self.save_path, pagesize=A4)
 
@@ -151,10 +151,10 @@ class writer:
                 self.c.drawString(x + 1, y + 1, f"{x//10}|{y//10}")
 
     def file_exists_and_not_old(self, file_path: str):
-        if not os.path.exists(file_path):
+        if not path.exists(file_path):
             return False
 
-        file_modified_time = datetime.fromtimestamp(os.path.getmtime(file_path))
+        file_modified_time = datetime.fromtimestamp(path.getmtime(file_path))
         current_time = datetime.now()
         max_age = timedelta(hours=12)
 
@@ -167,7 +167,7 @@ class writer:
             return
 
         url = f"https://dengue.ieremies.dev/data/{file}"
-        response = requests.get(url)
+        response = get(url)
         if response.status_code == 200:
             with open("tmp/" + file, "wb") as f:
                 f.write(response.content)
