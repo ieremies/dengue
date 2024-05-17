@@ -31,7 +31,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install Flask reportlab requests pypdf pyinstaller
+        pip install Flask reportlab requests pypdf pyinstaller psutil
 
     - name: Build executable with PyInstaller
       run: |
