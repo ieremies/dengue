@@ -59,34 +59,34 @@ class writer:
     def write_dados_residencia(self):
         self.write_spaced(self.user.uf_residencia, (54, 443))
         self.write(self.user.municipio_residencia, (84, 444))
-        self.write_spaced(self.user.ibge_residencia, (326, 444))
+        self.write_spaced(self.user.ibge_residencia, (314, 444))
         self.write(self.user.distrito_residencia, (414, 444))
         self.write(self.user.bairro_residencia, (64, 419))
         self.write(self.user.logradouro_residencia, (198, 418))
         self.write_spaced(self.user.cod_logradouro_residencia, (479, 418))
         self.write(self.user.numero_residencia, (63, 395))
         self.write(self.user.complemento_residencia, (120, 395))
-        self.write_spaced(self.user.complemento_residencia, (225, 369))
+        # self.write_spaced(self.user.complemento_residencia, (225, 369))
         # skip geo gampo 1
         # skip geo campo 2
         # skip ponto de referência
         self.write_spaced(self.user.cep_residencia, (458, 367), 14)
         self.write_spaced(self.user.telefone_residencia, (56, 343), 15)
+        self.write_spaced(self._code_zona(self.user.zona_residencia), (334, 354))
 
-        match self.user.zona_residencia:
+    def _code_zona(self, zona: str) -> str:
+        match zona:
             case "Urbana":
-                zona = 1
+                return "1"
             case "Rural":
-                zona = 2
+                return "2"
             case "Periurbana":
-                zona = 3
+                return "3"
             case _:
-                zona = 9
-        self.write_spaced(str(zona), (334, 354))
+                return ""
 
     def _code_esco(self, esco: str) -> str:
         esco = esco.lower()
-        # remove acentos
         esco.replace("ã", "a").replace("é", "e").replace("ç", "c")
 
         if "analfabeto" in esco:
@@ -123,10 +123,17 @@ class writer:
             return "5"
         return ""
 
+    def remove_special_chars(self, s: str) -> str:
+        chars = "().,-:;/\\"
+        for c in chars:
+            s = s.replace(c, "")
+        return s
+
     def write_spaced(
         self, to_write: str, coord: tuple[int, int], spacing: float = 14.5
     ):
         self.c.setFont("Times-Roman", 10)
+        to_write = self.remove_special_chars(to_write)
         x, y = coord
         for char in to_write.replace("/", "").strip():
             self.c.drawString(x, y + self.offset, char)

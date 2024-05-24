@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 #!/usr/bin/env python3
 from datetime import date
+from dataclasses import dataclass, asdict
 
 from dengue.debug import debug
 
 
+@dataclass
 class usuario:
     # === Dados Gerais ============================
     data: str = "09/06/2022"
@@ -36,6 +38,8 @@ class usuario:
     cep_residencia: str = ""  # "12345678"
     telefone_residencia: str = ""  # "111122334455"
     zona_residencia: str = "Urbana"
+
+    dict = asdict
 
     def __str__(self):
         s = ""

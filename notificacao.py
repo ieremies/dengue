@@ -1,29 +1,35 @@
 #!/usr/bin/env python3
-from flask import Flask, request, render_template, send_file
-from dengue.parse import parse
+from flask import (
+    Flask,
+    request,
+    render_template,
+    send_file,
+    redirect,
+    url_for,
+    after_this_request,
+)
+from dengue.parse import parse, usuario
 from dengue.write import writer
-from dengue.update import check_version
-from os import getpid
-from psutil import process_iter
+from dengue.update import check_version, kill_others
 from webbrowser import open
 
 app = Flask(__name__, template_folder="templates")
 
 UPDATE_URL = "https://github.com/ieremies/dengue/releases/download/"
-VERSION = "v1.1.6"
+VERSION = "v1.1.7"
 APP_NAME = "notificacao.exe"
 
 
-def kill_others():
-    current_pid = getpid()
-    for process in process_iter(["pid", "name"]):
-        if (process.info["name"].lower().endswith(APP_NAME.lower())) and (
-            process.info["pid"] != current_pid
-        ):
-            print(
-                f"Terminating process {process.info['name']} with PID {process.info['pid']}"
-            )
-            process.terminate()
+@app.route("/form", methods=["POST"])
+def submit_form():
+    f = writer(usuario(**request.form)).save()
+    return send_file(f, as_attachment=True)
+
+
+@app.route("/form", methods=["GET"])
+def form():
+    user = request.args
+    return render_template("form.html", usuario=user)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -38,8 +44,8 @@ def index():
 
     if request.method == "POST":
         text = request.form["text"]
-        f = writer(parse(text)).save()
-        return send_file(f, as_attachment=True)
+        d = parse(text).dict()
+        return redirect(url_for("form", **d))
 
     return render_template("index.html")
 
@@ -48,4 +54,4 @@ if __name__ == "__main__":
     kill_others()
     open("http://127.0.0.1:5000")
     print(f"Running version {VERSION}...")
-    app.run()
+    app.run(debug=True)

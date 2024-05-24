@@ -4,6 +4,13 @@ from json import loads
 from sys import executable, exc_info
 from subprocess import Popen
 from os import name as os_name
+from os import getpid
+from psutil import process_iter
+
+
+def kill_others():
+    # TODO
+    ...
 
 
 def remove_old_exe():
